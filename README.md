@@ -47,7 +47,57 @@ When you are finished, please upload your completed work to your Github and invi
 Please take some time to answer the following questions. Your answers should go directly in this `readme`.
 
 - Given more time, what would you suggest for improving the performance of this app?
+  
+    Given that the details panel requires several API calls, and we only use a fraction of the data returned. 
+    I would definitely use a caching system to avoid making the same calls multiple times. 
+    I would probably opt for using something like indexDB to cache the monster name with the monster object.
+    I would use a indexDB state manager, and I would do the same for the pokemon list as well for (offline first) options. 
+    I would use a state manager to handle expiration as well. I would not opt for storing this data in a state as 
+        1 - it gets wiped clean on refresh, 
+        2 - in this use case it's less likely, but it leaves the potential to storing a large amount of data in memory. 
+    Given the fact this data is not user specific, I would probably also push for network level cache and API abstraction
+    So that the computation is only done at first user request and every subsequent guest request is cached for a faster load time. 
+    
 
 - Is there anything you would consider doing if we were to go live with this app?
+    Yes, there is a lot of information we're leaving out at the moment that would could expand features upon. 
+    I am not of the pokemon world, so I can't speak to which info is most important, but that's when I would work along
+    side product and project managers to ensure that given our already existing capabilities, that would we deliver as 
+    much value to our user as possible. 
+
+    I would not limit the search to the existing list if there is a wider dataset. If this was our own data, I would also 
+    use more advances search capabilities such as near term matching and tokenization to allow for partial and 
+    weighted search results, allowed for faceted searches to provide the user with more flexibility in search.  
+
+    I would 100% implement at the very least FE level caching of network requests and offer offline capabilities before launch
+
+    And of course, polish the UX, and provide a more catered experience to user. 
+
+    There is also loading states, right now I added a loading state for the details, which will seem like a flicker if the API calls
+    resolves quickly. This is a case where I would have a minimum time set for render to avoid the change looking like a flicker.
+    And where caching would mean I only need to render loading state on actual network calls.
+
+    Not that I think you want this to be in scope for this project, but I would also update the dependencies. 
+    
 
 - What was the most challenging aspect of this work for you (if at all)?
+    
+    I didn't experience any issue I would consider a challenge. 
+    I made some engineeering decisions that aligned with the goals of the app even if it 
+    meant changing some code already built.
+    
+    Biggest change is I made the list reduction a computed value vs a stored state value.
+    It avoids having duplicate data across two states and risking those states getting out of sync. 
+    I cached the list value so the computation wouldn't happen every time. 
+    I changed the list loading to have no dependencies, since we are not searching via the API, it shoudln't be
+    dependent on the search term. 
+    I also changed the search behavior to reflect the computed value rather than the set list approach. 
+
+    I don't love functions that return functions that aren't dependent upon it. 
+    For example, in onGetDetails call on the get details button, my approach would be to wrap the onClick with a () => , which I know accomplishes the
+    same "function returns function", but it keeps the writing of onGetDetails cleaner to be simply an onGetDetails = async(name)
+
+    Not a blocker, but just a creative choice I would make different unless its the style pattern the company likes to keep. 
+
+
+    
